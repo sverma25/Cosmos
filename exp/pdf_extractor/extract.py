@@ -1,7 +1,7 @@
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfinterp import PDFResourceManager
-from pdfminer.layout import LTTextBox
+from pdfminer.layout import LTTextBox, LTText, LTTextLine, LTChar
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from pdfminer.layout import LAParams
@@ -27,12 +27,15 @@ def parse_pdf(fp):
             layout = device.get_result()
             for child in layout:
                 if isinstance(child, LTTextBox):
-                    text = child.get_text()
-                    pos = child.bbox
-                    page = idx
-                texts.append(text)
-                positions.append(pos)
-                pages.append(page)
+                    for line in child:
+                        for char in line:
+                            if isinstance(char, LTChar):
+                                text = char.get_text()
+                                pos = char.bbox
+                                page = idx
+                                texts.append(text)
+                                positions.append(pos)
+                                pages.append(page)
     x1, y1, x2, y2 = list(zip(*positions))
     df = pd.DataFrame({
         "text": texts,
