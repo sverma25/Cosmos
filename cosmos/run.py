@@ -23,6 +23,7 @@ import postprocess
 from voc_utils import ICDAR_convert
 from connected_components.connected_components import write_proposals
 from proposal_matcher.process import process_doc
+from relation_extraction.extraction import extract
 
 # PDF directory path
 
@@ -198,6 +199,7 @@ if args.noingest:
 else:
     parse_html_to_postgres(input_folder, output_html, merge_folder, output_html, db_connect_str, strip_tags, ignored_file_when_link, store_into_postgres=True)
 
+extract()
 
 #shutil.rmtree('xml')
 shutil.rmtree(f'{tmp}')

@@ -18,6 +18,7 @@ class PageConfig(Config):
 
 #base = '/app'
 output = '/output'
+input_pdf_dir = 'pdfs/'
 ## POSTGRES INGESTION FILE SETTINGS
 ingestion_settings = {
     'input_folder'           : os.path.join(output, 'html'),
@@ -28,4 +29,8 @@ ingestion_settings = {
     'strip_tags'             : ['strong', 'em'],
     'ignored_file_when_link' : [],
 }
+
+# EXTRACTION SETTINGS
+
+extraction_thread_count = 4
 
