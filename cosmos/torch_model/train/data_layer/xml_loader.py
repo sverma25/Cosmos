@@ -14,11 +14,11 @@ import torch
 from xml.etree import ElementTree as ET
 from .transforms import NormalizeWrapper
 import pickle
-from torch_model.utils.matcher import match
+from utils.matcher import match
 from collections import namedtuple
 from uuid import uuid4
 from tqdm import tqdm
-from torch_model.utils.bbox import BBoxes
+from utils.bbox import BBoxes
 normalizer = NormalizeWrapper()
 
 tens = ToTensor()

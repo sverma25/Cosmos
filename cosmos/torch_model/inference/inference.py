@@ -28,15 +28,20 @@ class InferenceHelper:
             mkdir(out)
         loader = DataLoader(self.dataset, batch_size=1, collate_fn=self.dataset.collate, )
         for doc in tqdm(loader):
+            if doc is None:
+                writer = Writer("", 1000,1000)
+                writer.save(join(out, f"{identifier}.xml"))
+                continue
+
             windows, proposals, identifier = doc
             proposals.change_format("xyxy")
             windows = windows.to(self.device)
             preds = self._get_predictions(windows)
             writer = Writer("", 1000,1000)
             for i in range(len(preds)):
-                pred = preds[i]
+                pred, score = preds[i]
                 x0, y0, x1, y1 = proposals[i, :].long().tolist()
-                writer.addObject(pred, x0, y0, x1, y1)
+                writer.addObject(pred, x0, y0, x1, y1, difficult=score)
             writer.save(join(out, f"{identifier}.xml"))
     def _get_predictions(self, windows):
         """
@@ -47,8 +52,11 @@ class InferenceHelper:
         rois, cls_scores = self.model(windows, self.device)
         # filter background predictions
         probs, pred_idxs = torch.max(cls_scores, dim=1)
-        for i in pred_idxs:
-            preds.append(self.cls[i])
+        print(cls_scores)
+        for ind, i in enumerate(pred_idxs):
+            score = probs[ind]
+            print(score.item())
+            preds.append((self.cls[i], score.item()))
         return preds
 
 
