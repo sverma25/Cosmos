@@ -51,10 +51,11 @@ class InferenceHelper:
         preds = []
         rois, cls_scores = self.model(windows, self.device)
         # filter background predictions
+        probabilities = torch.nn.functional.softmax(cls_scores, dim=1)
         probs, pred_idxs = torch.max(cls_scores, dim=1)
-        print(cls_scores)
+        print(probabilities)
         for ind, i in enumerate(pred_idxs):
-            score = probs[ind]
+            score = probabilities[ind][i]
             print(score.item())
             preds.append((self.cls[i], score.item()))
         return preds
